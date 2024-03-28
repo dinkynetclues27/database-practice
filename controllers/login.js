@@ -9,7 +9,7 @@ const login = async (req, res) => {
 
     try {
         const user = await sequelize.query(
-            `SELECT * FROM users WHERE email = ?`,
+            `SELECT * FROM users WHERE email = :email`,
             {
                 replacements: { email },
                 type: QueryTypes.SELECT
