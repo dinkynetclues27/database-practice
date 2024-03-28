@@ -1,8 +1,10 @@
 const { QueryTypes } = require("sequelize");
 const sequelize = require("../database");
 const user = require('../modules/user')
+const  bcrypt = require('bcrypt')
 
 const insertdata = async(req,res)=>{
+    
     const {
         id,
         firstname,
@@ -14,9 +16,11 @@ const insertdata = async(req,res)=>{
         departmentid
       } = req.body;
     
+      const securPass = await bcrypt.hash(password,10)
+
     try{
         await sequelize.query(`Insert INTO Users (id,firstname,lastname,email,password,gender,hobbies,departmentid)
-        VALUES (${id},'${firstname}','${lastname}','${email}','${password}','${gender}','${hobbies}',${departmentid})`,
+        VALUES (${id},'${firstname}','${lastname}','${email}','${securPass}','${gender}','${hobbies}',${departmentid})`,
         {
             type:QueryTypes.INSERT,
         });

@@ -1,32 +1,36 @@
 const { QueryTypes } = require('sequelize');
 const bcrypt = require('bcrypt');
 const sequelize = require('../database');
+const jwt = require("jsonwebtoken")
+const JWT_SECRET = "abcde"
 
 const login = async (req, res) => {
-    const { firstname, password } = req.body;
+    const { email, password } = req.body;
 
     try {
-        const fname = await sequelize.query(
-            `SELECT * FROM users WHERE firstname = :firstname`,
+        const user = await sequelize.query(
+            `SELECT * FROM users WHERE email = ?`,
             {
-                replacements: { firstname },
+                replacements: { email },
                 type: QueryTypes.SELECT
             }
         );
-        if (fname.length === 0) {
+
+        if (user.length === 0) {
             return res.status(404).json({ error: 'User not found' });
         }
 
-        const isPasswordValid = await sequelize.query(
-            `SELECT * FROM users WHERE password = :password`,
-            {
-                replacements: { password },
-                type: QueryTypes.SELECT
-            });
+        const isPasswordValid = await bcrypt.compare(password, user[0].password);
+
         if (!isPasswordValid) {
             return res.status(401).json({ error: 'Invalid password' });
         }
-        res.status(200).json({ message: 'Login successful' });
+
+        const token = jwt.sign({
+            email: user[0].email,
+        }, JWT_SECRET);
+
+        return res.status(200).json({ message: 'Login successful', token });
     } catch (error) {
         console.error(error);
         res.status(500).json({ error: 'Internal Server Error' });
