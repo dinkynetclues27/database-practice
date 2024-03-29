@@ -41,6 +41,15 @@ const  bcrypt = require('bcrypt')
 const profilepictureauthenticate = require('../middlewares/profilepictureauthenticate')
 
 const insertdata = async(req,res)=>{
+    try{
+        await profilepictureauthenticate(req, res, async function (err) {
+            if (err) {
+                return res.status(400).json({ error: err });
+            }
+
+            if (!req.file) {
+                return res.status(400).json({ error: "Error: No File Selected!" });
+            }
     
     const {
         id,
@@ -51,23 +60,16 @@ const insertdata = async(req,res)=>{
         gender,
         hobbies,
         departmentid,
-        profile_picture
       } = req.body;
     
       const securPass = await bcrypt.hash(password,10)
 
-    try{
-        await profilepictureauthenticate(req, res, async function (err) {
-            if (err) {
-                return res.status(400).json({ error: err });
-            }
+      const profile_picture = req.file
 
-            if (!req.file) {
-                return res.status(400).json({ error: "Error: No File Selected!" });
-            }
+   
 
         await sequelize.query(`Insert INTO Users (id,firstname,lastname,email,password,gender,hobbies,departmentid,profile_picture)
-        VALUES (${id},'${firstname}','${lastname}','${email}','${securPass}','${gender}','${hobbies}',${departmentid},'${profile_picture}')`,
+        VALUES (${id},'${firstname}','${lastname}','${email}','${securPass}','${gender}','${hobbies}',${departmentid},'${profile_picture.filename}')`,
         {
             type:QueryTypes.INSERT,
         });

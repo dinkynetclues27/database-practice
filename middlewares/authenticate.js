@@ -37,9 +37,10 @@
 const jwt = require('jsonwebtoken');
 const { QueryTypes } = require('sequelize');
 const sequelize = require('../database');
+require('dotenv').config();
 
-const JWT_SECRET = "dinkyjani";
-
+// const JWT_SECRET = "dinkyjani";
+const JWT_SECRET = process.env.SECRETKEY
 const authenticateUser = async (req, res, next) => {
   try {
     const token = req.headers.authorization;
@@ -52,6 +53,7 @@ const authenticateUser = async (req, res, next) => {
 
     jwt.verify(tokenValue, JWT_SECRET, async (err, decoded) => {
       if (err) {
+        console.log(JWT_SECRET)
         return res.status(401).json({ error: 'Unauthorized: Invalid token' });
       }
 
