@@ -31,7 +31,7 @@ const getbyiddata = require("../controllers/getbyid")
 const getuserwithdepartment = require("../controllers/getuserwithdepartment")
 const softdelete = require("../controllers/softdelete")
 const login = require("../controllers/login")
-const profilePicUploadMiddleware = require("../middlewares/profilepicmiddleware");
+//const profilePicUploadMiddleware = require("../middlewares/profilepicmiddleware");
 const routers = express.Router();
 
 // Routes with authentication

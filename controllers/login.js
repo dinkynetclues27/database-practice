@@ -2,7 +2,7 @@ const { QueryTypes } = require('sequelize');
 const bcrypt = require('bcrypt');
 const sequelize = require('../database');
 const jwt = require("jsonwebtoken")
-const JWT_SECRET = "abcde"
+const JWT_SECRET = "dinkyjani"
 
 const login = async (req, res) => {
     const { email, password } = req.body;
