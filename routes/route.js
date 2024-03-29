@@ -31,6 +31,8 @@ const getbyiddata = require("../controllers/getbyid")
 const getuserwithdepartment = require("../controllers/getuserwithdepartment")
 const softdelete = require("../controllers/softdelete")
 const login = require("../controllers/login")
+const bookinsertdata = require("../controllers/book/bookinsert");
+const bookupdatedata = require("../controllers/book/bookupdate");
 //const profilePicUploadMiddleware = require("../middlewares/profilepicmiddleware");
 const routers = express.Router();
 
@@ -41,7 +43,8 @@ routers.get("/list", authenticateUser, listdata);
 routers.get("/getbyid/:id", authenticateUser, getbyiddata);
 routers.get("/userwdepartment", authenticateUser, getuserwithdepartment);
 routers.get("/softdelete/:id", authenticateUser, softdelete);
-
+routers.post("/bookinsert",bookinsertdata)
+routers.get("/bookupdate/:bookid",authenticateUser,bookupdatedata)
 // Route without authentication (login)
 routers.post("/login", login);
 
