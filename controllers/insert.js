@@ -59,9 +59,9 @@ const insertdata = async(req,res)=>{
         password,
         gender,
         hobbies,
-        departmentid,
+        departmentid
       } = req.body;
-    
+
       const securPass = await bcrypt.hash(password,10)
 
       const profile_picture = req.file

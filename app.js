@@ -10,7 +10,7 @@ const routers = require('./routes/route')
 const port = process.env.PORT
 const app = express();
 app.use(bodyParser.json());
-
+app.use(bodyParser.urlencoded({extended:true}));
 app.use("/public/assets", express.static(path.join(__dirname, 'public', 'assets')))
 app.use(routers);
 sequelize;
