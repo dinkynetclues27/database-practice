@@ -1,6 +1,10 @@
 import logo from './logo.svg';
 import './App.css';
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import Booktable from './bookfetch';
+import MyFormComponent from './bookinsert';
+import { ToastContainer }  from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 function App() {
   return (
@@ -19,7 +23,16 @@ function App() {
           Learn React
         </a>
       </header> */}
-      <Booktable/>
+{/* <Booktable/> */}
+{/* <MyFormComponent/> */}
+<ToastContainer />
+<BrowserRouter>
+      <Routes>
+        <Route exact path="/fetchbook" element={<Booktable />} />
+        <Route exact path="/insertbook" element={<MyFormComponent />} />
+       
+      </Routes>
+    </BrowserRouter>
     </div>
   );
 }
