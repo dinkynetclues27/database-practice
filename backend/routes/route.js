@@ -39,6 +39,7 @@ const genreinsertdata = require("../controllers/genre/genreinsert")
 const genreupdatedata = require("../controllers/genre/genreupdate")
 const search = require("../controllers/search")
 const deletebook = require("../controllers/delete")
+const bookdata =require("../controllers/book/bookfetch")
 //const profilePicUploadMiddleware = require("../middlewares/profilepicmiddleware");
 const routers = express.Router();
 
@@ -57,6 +58,7 @@ routers.post("/genreinsert",genreinsertdata)
 routers.get("/genreupdate/:genreid",authenticateUser,genreupdatedata)
 routers.get("/search",search)
 routers.delete("/deletebook/:bookid", deletebook)
+routers.get("/bookfetch",bookdata)
 // Route without authentication (login)
 routers.post("/login", login);
 

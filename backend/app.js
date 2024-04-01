@@ -4,11 +4,13 @@ const User = require('./modules/user');
 const Department = require('./modules/department')
 const express = require('express');
 const bodyParser = require('body-parser');
+const cors = require('cors');
+const app = express();
 
+app.use(cors())
 const path = require("path")
 const routers = require('./routes/route')
 const port = process.env.PORT
-const app = express();
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended:true}));
 app.use("/public/assets", express.static(path.join(__dirname, 'public', 'assets')))
