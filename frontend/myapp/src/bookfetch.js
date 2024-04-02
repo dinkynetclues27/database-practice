@@ -35,18 +35,31 @@ function Booktable(){
         setEditIndex(index);
         setEditedBook({ ...books[index] });
     };
-    const handleDelete = (id,idx) => {
-        let response = window.confirm(`delete id : ${id}`);
-        if(response){
-            let book = [...books];
-            book.splice(idx,1);
-            setEditedBook(book);
-        }
-        else{
-            alert("deleted successfully")
+
+    const handleDelete = (id, idx) => {
+        console.log("Deleting book with id:", id);
+        console.log("Books before deletion:", books);
+        let response = window.confirm(`Delete id: ${id}`);
+        if (response) {
+            const xhr = new XMLHttpRequest();
+            xhr.open('DELETE', `http://localhost:4000/deletebook/${id}`);
+            xhr.onload = function() {
+                if (xhr.readyState === XMLHttpRequest.DONE) {
+                    console.log('XHR status:', xhr.status);
+                    if (xhr.status === 200) {
+                        console.log('Book deleted successfully');
+                        fetchBooks();
+                    } else {
+                        console.error('Error deleting book:', xhr.statusText);
+                    }
+                }
+            };
+            xhr.send(fetchBooks('http://localhost:4000/bookfetch'));
+        } else {
+            alert("Deletion cancelled");
         }
     };
-
+    
     const handleInputChange = (event) => {
         const { name, value } = event.target;
         setEditedBook(prevState => ({
@@ -67,7 +80,7 @@ function Booktable(){
             if (xhr.readyState === XMLHttpRequest.DONE) {
                 if (xhr.status === 200) {
                     console.log('Book updated successfully');
-                    fetchBooks();
+                    fetchBooks(); 
                     setEditIndex(-1); 
                 } else {
                     console.error('Error updating book:', xhr.statusText);
@@ -76,18 +89,6 @@ function Booktable(){
         };
         xhr.send(JSON.stringify(editedBook));
     };
-
-    const editForm = (book, index) => (
-        <div key={index} className="edit-form">
-            <h2>Edit Book</h2>
-            <input type="text" name="title" value={editedBook.title} onChange={handleInputChange} />
-            <input type="text" name="description" value={editedBook.description} onChange={handleInputChange} />
-            <input type="text" name="publish_year" value={editedBook.publish_year} onChange={handleInputChange} />
-            <input type="text" name="quantity" value={editedBook.quantity} onChange={handleInputChange} />
-            <button onClick={() => handleSaveEdit(book.bookid)}>Save</button>
-            <button onClick={handleCancelEdit}>Cancel</button>
-        </div>
-    );
 
     return (
         <div className="booktable-container">
@@ -115,13 +116,25 @@ function Booktable(){
                                 <button onClick={() => handleEdit(idx)}>Edit</button>
                             </td>
                             <td>
-                                <button onClick={() => handleDelete(idx)}>Delete</button>
+                                <button onClick={() => handleDelete(book.bookid, idx)}>Delete</button>
                             </td>
                         </tr>
                     ))}
                 </tbody>
             </table>
-            {editIndex !== -1 && editForm(books[editIndex], editIndex)}
+
+            {/* Edit Form Pop-up */}
+            {editIndex !== -1 && (
+                <div className="popup">
+                    <h2>Edit Book</h2>
+                    <input type="text" name="title" value={editedBook.title} onChange={handleInputChange} placeholder="Title" />
+                    <input type="text" name="description" value={editedBook.description} onChange={handleInputChange} placeholder="Description" />
+                    <input type="text" name="publish_year" value={editedBook.publish_year} onChange={handleInputChange} placeholder="Publish Year" />
+                    <input type="text" name="quantity" value={editedBook.quantity} onChange={handleInputChange} placeholder="Quantity" />
+                    <button onClick={() => handleSaveEdit(books[editIndex].bookid)}>Save</button>
+                    <button onClick={handleCancelEdit}>Cancel</button>
+                </div>
+            )}
         </div>
     );
 }
