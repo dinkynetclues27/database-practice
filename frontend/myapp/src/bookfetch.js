@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from "react";
 import './style.css'; 
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 function Booktable(){
     const [books, setBooks] = useState([]);
@@ -11,9 +13,12 @@ function Booktable(){
         quantity: ""
     });
 
+    const [currentPage, setCurrentPage] = useState(1);
+    const itemsPerPage = 5;
+
     useEffect(() => {
         fetchBooks();
-    }, []);
+    }, [currentPage]);
 
     const fetchBooks = () => {
         const xhr = new XMLHttpRequest();
@@ -49,8 +54,10 @@ function Booktable(){
                     if (xhr.status === 200) {
                         console.log('Book deleted successfully');
                         fetchBooks();
+                        toast.success('Book deleted successfully')
                     } else {
                         console.error('Error deleting book:', xhr.statusText);
+                        toast.error("error")
                     }
                 }
             };
@@ -82,13 +89,20 @@ function Booktable(){
                     console.log('Book updated successfully');
                     fetchBooks(); 
                     setEditIndex(-1); 
+                    toast.success('Book updated successfully')
                 } else {
                     console.error('Error updating book:', xhr.statusText);
+                    toast.error('error updating book')
                 }
+
             }
         };
         xhr.send(JSON.stringify(editedBook));
     };
+
+    const indexOfLastBook = currentPage * itemsPerPage;
+    const indexOfFirstBook = indexOfLastBook - itemsPerPage;
+    const currentBooks = books.slice(indexOfFirstBook, indexOfLastBook);
 
     return (
         <div className="booktable-container">
@@ -105,7 +119,7 @@ function Booktable(){
                     </tr>
                 </thead>
                 <tbody>
-                    {books.map((book, idx) => (
+                    {currentBooks.map((book, idx) => (
                         <tr key={idx}>
                             <td>{book.bookid}</td>
                             <td>{book.title}</td>
@@ -123,7 +137,7 @@ function Booktable(){
                 </tbody>
             </table>
 
-            {/* Edit Form Pop-up */}
+            
             {editIndex !== -1 && (
                 <div className="popup">
                     <h2>Edit Book</h2>
@@ -135,6 +149,12 @@ function Booktable(){
                     <button onClick={handleCancelEdit}>Cancel</button>
                 </div>
             )}
+            <div className="pagination">
+                <button onClick={() => setCurrentPage(page => Math.max(page - 1, 1))} disabled={currentPage === 1}>Previous</button>
+                <span>Page {currentPage}</span>
+                <button onClick={() => setCurrentPage(page => page + 1)}>Next</button>
+            </div>
+            <ToastContainer/>
         </div>
     );
 }
