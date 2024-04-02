@@ -1,0 +1,326 @@
+// import React, { useEffect, useState } from "react";
+// import './style.css'; 
+
+// function Booktable(){
+//     const [books, setBooks] = useState([]);
+//     // const page = req.query.page || 1;
+//     // const pagesize = req.query.pagesize || 10;
+//     // const skip = (page - 1) * pagesize;
+//     useEffect(() => {
+//         fetch('http://localhost:4000/bookfetch')
+//             .then(response => response.json())
+//             .then(data => setBooks(data))
+//             .catch(error => console.error(error));
+//     }, []);
+
+//     const handleEdit = (bookid, index) => {
+//         const editedBook = { ...books[index] };
+//         const newTitle = prompt("Enter new title:", editedBook.title);
+//         const newDescription = prompt("Enter new description:", editedBook.description);
+//         const newPublishYear = prompt("Enter new publish year:", editedBook.publish_year);
+//         const newQuantity = prompt("Enter new quantity:", editedBook.quantity);
+       
+
+
+//         if (newTitle || newDescription || newPublishYear || newQuantity) {
+//             editedBook.title = newTitle || editedBook.title;
+//             editedBook.description = newDescription || editedBook.description;
+//             editedBook.publish_year = newPublishYear || editedBook.publish_year;
+//             editedBook.quantity = newQuantity || editedBook.quantity;
+
+           
+//             const updatedBooks = [...books];
+//             updatedBooks[index] = editedBook;
+//             setBooks(updatedBooks);
+
+           
+//             fetch(`http://localhost:4000/bookupdate/${bookid}`, {
+//                 method: 'PUT',
+//                 headers: {
+//                     'Content-Type': 'application/json',
+//                 },
+//                 body: JSON.stringify(editedBook),
+//             })
+//             .then(response => response.json())
+//             .then(data => console.log(data))
+//             .catch(error => console.error(error));
+//         }
+//     };
+
+//     return (
+//         <div className="booktable-container">
+//             <table className="booktable-table">
+//                 <thead>
+//                     <tr>
+//                         <th>Book Id:</th>
+//                         <th>Title</th>
+//                         <th>Description</th>
+//                         <th>Publish year</th>
+//                         <th>Quantity</th>
+//                         <th>Edit</th>
+//                         <th>Delete</th>
+//                     </tr>
+//                 </thead>
+//                 <tbody>
+//                     {books.map((book, idx) => (
+//                         <tr key={idx}>
+//                             <td>{book.bookid}</td>
+//                             <td>{book.title}</td>
+//                             <td>{book.description}</td>
+//                             <td>{book.publish_year}</td>
+//                             <td>{book.quantity}</td>
+//                             <td>
+//                                 <button onClick={() => handleEdit(book.bookid, idx)}>Edit</button>
+//                             </td>
+//                             <td>
+//                                 <button>Delete</button>
+//                             </td>
+//                         </tr>
+//                     ))}
+//                 </tbody>
+//             </table>
+//         </div>
+//     );
+// }
+
+// export default Booktable;
+
+
+// import React, { useEffect, useState } from "react";
+// import './style.css'; 
+
+// function Booktable(){
+//     const [books, setBooks] = useState([]);
+//     const [editIndex, setEditIndex] = useState(-1);
+//     const [editedBook, setEditedBook] = useState({
+//         title: "",
+//         description: "",
+//         publish_year: "",
+//         quantity: ""
+//     });
+
+//     useEffect(() => {
+//         fetch('http://localhost:4000/bookfetch')
+//             .then(response => response.json())
+//             .then(data => setBooks(data))
+//             .catch(error => console.error(error));
+//     }, []);
+
+//     const handleEdit = (bookid, index) => {
+//         setEditIndex(index);
+//         setEditedBook({ ...books[index] });
+//     };
+
+//     const handleInputChange = (event) => {
+//         const { name, value } = event.target;
+//         setEditedBook(prevState => ({
+//             ...prevState,
+//             [name]: value
+//         }));
+//     };
+
+//     const handleCancelEdit = () => {
+//         setEditIndex(-1);
+//     };
+
+//     const handleSaveEdit = (bookid) => {
+//         const updatedBooks = [...books];
+//         updatedBooks[editIndex] = editedBook;
+//         setBooks(updatedBooks);
+//         setEditIndex(-1);
+
+//         fetch(`http://localhost:4000/bookupdate/${bookid}`, {
+//             method: 'PUT',
+//             headers: {
+//                 'Content-Type': 'application/json',
+//             },
+//             body: JSON.stringify(editedBook),
+//         })
+//         .then(response => response.json())
+//         .then(data => console.log(data))
+//         .catch(error => console.error(error));
+//     };
+
+//     return (
+//         <div className="booktable-container">
+//             <table className="booktable-table">
+//                 <thead>
+//                     <tr>
+//                         <th>Book Id:</th>
+//                         <th>Title</th>
+//                         <th>Description</th>
+//                         <th>Publish year</th>
+//                         <th>Quantity</th>
+//                         <th>Edit</th>
+//                         <th>Delete</th>
+//                     </tr>
+//                 </thead>
+//                 <tbody>
+//                     {books.map((book, idx) => (
+//                         <tr key={idx}>
+//                             <td>{book.bookid}</td>
+//                             <td>{editIndex === idx ? <input type="text" name="title" value={editedBook.title} onChange={handleInputChange} /> : book.title}</td>
+//                             <td>{editIndex === idx ? <input type="text" name="description" value={editedBook.description} onChange={handleInputChange} /> : book.description}</td>
+//                             <td>{editIndex === idx ? <input type="text" name="publish_year" value={editedBook.publish_year} onChange={handleInputChange} /> : book.publish_year}</td>
+//                             <td>{editIndex === idx ? <input type="text" name="quantity" value={editedBook.quantity} onChange={handleInputChange} /> : book.quantity}</td>
+//                             <td>
+//                                 {editIndex === idx ? (
+//                                     <>
+//                                         <button onClick={() => handleSaveEdit(book.bookid)}>Save</button>
+//                                         <button onClick={handleCancelEdit}>Cancel</button>
+//                                     </>
+//                                 ) : (
+//                                     <button onClick={() => handleEdit(book.bookid, idx)}>Edit</button>
+//                                 )}
+//                             </td>
+//                             <td>
+//                                 <button>Delete</button>
+//                             </td>
+//                         </tr>
+//                     ))}
+//                 </tbody>
+//             </table>
+//         </div>
+//     );
+// }
+
+// export default Booktable;
+
+
+// import React, { useEffect, useState } from "react";
+// import './style.css'; 
+
+// function Booktable(){
+//     const [books, setBooks] = useState([]);
+//     const [editIndex, setEditIndex] = useState(-1);
+//     const [editedBook, setEditedBook] = useState({
+//         title: "",
+//         description: "",
+//         publish_year: "",
+//         quantity: ""
+//     });
+
+//     useEffect(() => {
+//         fetch('http://localhost:4000/bookfetch')
+//             .then(response => response.json())
+//             .then(data => setBooks(data))
+//             .catch(error => console.error(error));
+//     }, []);
+
+//     const handleEdit = (bookid, index) => {
+//         setEditIndex(index);
+//         setEditedBook({ ...books[index] });
+//     };
+
+//     const handleInputChange = (event) => {
+//         const { name, value } = event.target;
+//         setEditedBook(prevState => ({
+//             ...prevState,
+//             [name]: value
+//         }));
+//     };
+
+//     const handleCancelEdit = () => {
+//         setEditIndex(-1);
+//     };
+
+//     const handleSaveEdit = (bookid) => {
+//         const updatedBooks = [...books];
+//         updatedBooks[editIndex] = editedBook;
+//         setBooks(updatedBooks);
+//         setEditIndex(-1);
+
+//         fetch(`http://localhost:4000/bookupdate/${bookid}`, {
+//             method: 'PUT',
+//             headers: {
+//                 'Content-Type': 'application/json',
+//             },
+//             body: JSON.stringify(editedBook),
+//         })
+//         .then(response => response.json())
+//         .then(data => console.log(data))
+//         .catch(error => console.error(error));
+//     };
+
+//     return (
+//         <div className="booktable-container">
+//             <table className="booktable-table">
+//                 <thead>
+//                     <tr>
+//                         <th>Book Id:</th>
+//                         <th>Title</th>
+//                         <th>Description</th>
+//                         <th>Publish year</th>
+//                         <th>Quantity</th>
+//                         <th>Edit</th>
+//                         <th>Delete</th>
+//                     </tr>
+//                 </thead>
+//                 <tbody>
+//                     {books.map((book, idx) => (
+//                         <tr key={idx}>
+//                             <td>{book.bookid}</td>
+//                             <td>{book.title}</td>
+//                             <td>{book.description}</td>
+//                             <td>{book.publish_year}</td>
+//                             <td>{book.quantity}</td>
+//                             <td>
+//                                 <button onClick={() => handleEdit(book.bookid, idx)}>Edit</button>
+//                             </td>
+//                             <td>
+//                                 <button>Delete</button>
+//                             </td>
+//                         </tr>
+//                     ))}
+//                 </tbody>
+//             </table>
+//             {editIndex !== -1 && (
+//                 <div className="edit-modal">
+//                     <div className="edit-modal-content">
+//                         <h2>Edit Book</h2>
+//                         <input type="text" name="title" value={editedBook.title} onChange={handleInputChange} />
+//                         <input type="text" name="description" value={editedBook.description} onChange={handleInputChange} />
+//                         <input type="text" name="publish_year" value={editedBook.publish_year} onChange={handleInputChange} />
+//                         <input type="text" name="quantity" value={editedBook.quantity} onChange={handleInputChange} />
+//                         <button onClick={() => handleSaveEdit(books[editIndex].bookid)}>Save</button>
+//                         <button onClick={handleCancelEdit}>Cancel</button>
+//                     </div>
+//                 </div>
+//             )}
+//         </div>
+//     );
+// }
+
+// export default Booktable;
+
+
+// Sure, let's go into more detail about each function:
+
+// 1. `handleEdit(index)`: 
+//    - This function is responsible for initiating the editing process when the "Edit" button is clicked.
+//    - It takes the index of the book in the `books` array as an argument.
+//    - When called, it updates the `editIndex` state with the index of the book being edited.
+//    - It also sets the `editedBook` state with the details of the book being edited. This ensures that the edit form displays the current details of the book.
+
+// 2. `handleInputChange(event)`:
+//    - This function is called whenever there's a change in any input field within the edit form.
+//    - It takes the `event` object as an argument, which contains information about the input field that triggered the change.
+//    - Using object destructuring, it extracts the `name` and `value` properties from the input field.
+//    - It updates the `editedBook` state by creating a new object using the spread operator (`...prevState`) to retain the previous state and then updating the specific property (`[name]: value`) that corresponds to the changed input field.
+
+// 3. `handleCancelEdit()`:
+//    - This function is triggered when the "Cancel" button is clicked in the edit form.
+//    - Its purpose is to cancel the editing process and close the edit form.
+//    - It sets the `editIndex` state back to -1, indicating that no book is currently being edited.
+
+// 4. `handleSaveEdit(bookid)`:
+//    - This function is called when the user clicks the "Save" button in the edit form to save the changes made to the book.
+//    - It takes the `bookid` of the edited book as an argument.
+//    - It creates a new XMLHttpRequest (`xhr`) and configures it to send a PUT request to the server endpoint responsible for updating the book details (`http://localhost:4000/bookupdate/${bookid}`).
+//    - It sets the request headers to specify that the data being sent is in JSON format.
+//    - The `onreadystatechange` event handler is set to listen for changes in the state of the request. When the request state changes to `XMLHttpRequest.DONE`, it checks if the status of the response is 200 (indicating a successful request).
+//    - If the request is successful, it logs a message indicating that the book was updated successfully.
+//    - It then fetches the updated list of books using the `fetchBooks` function to reflect the changes immediately.
+//    - Finally, it resets the `editIndex` state to -1 to close the edit form and indicate that no book is currently being edited.
+
+// These functions together handle the editing functionality in your application by allowing users to edit book details, save the changes, or cancel the editing process. Let me know if you need further clarification on any part!

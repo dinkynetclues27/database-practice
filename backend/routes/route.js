@@ -52,7 +52,7 @@ routers.get("/userwdepartment", authenticateUser, getuserwithdepartment);
 routers.get("/softdelete/:id", authenticateUser, softdelete);
 routers.post("/bookinsert",bookinsertdata)
 routers.post("/authorinsert",authorinsertdata)
-routers.get("/bookupdate/:bookid",authenticateUser,bookupdatedata)
+routers.put("/bookupdate/:bookid",bookupdatedata)
 routers.get("/authorupdate/:authorid",authenticateUser,authorupdatedata)
 routers.post("/genreinsert",genreinsertdata)
 routers.get("/genreupdate/:genreid",authenticateUser,genreupdatedata)
