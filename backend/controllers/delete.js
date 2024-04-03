@@ -22,6 +22,7 @@ const deletebook = async (req,res) => {
 
         if (authors.length > 0 || genres.length > 0) {
             console.log("Book cannot be deleted as it is associated with author or genre.");
+            res.status(409).send("Book cannot be deleted as it is associated with author or genre.").end()
             return;
         }
 
@@ -33,6 +34,7 @@ const deletebook = async (req,res) => {
             }
         );
 
+        res.status(200).send("Done")
         console.log("book deleted successfully.");
     } catch (error) {
         console.error("Error deleting author:", error);

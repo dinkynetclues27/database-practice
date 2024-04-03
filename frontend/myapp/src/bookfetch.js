@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
-import './style.css'; 
+import './style.css';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
-function Booktable(){
+function Booktable() {
     const [books, setBooks] = useState([]);
     const [editIndex, setEditIndex] = useState(-1);
     const [editedBook, setEditedBook] = useState({
@@ -14,16 +14,16 @@ function Booktable(){
     });
 
     const [currentPage, setCurrentPage] = useState(1);
-    const itemsPerPage = 5;
-
+    const itemsPerPage = 1;
+    const totalpage = Math.ceil(books.length / itemsPerPage);
     useEffect(() => {
         fetchBooks();
     }, [currentPage]);
 
     const fetchBooks = () => {
         const xhr = new XMLHttpRequest();
-        xhr.open('GET', 'http://localhost:4000/bookfetch');
-        xhr.onreadystatechange = function() {
+        xhr.open('GET', 'http://localhost:4000/bookfetch', true);
+        xhr.onreadystatechange = function () {
             if (xhr.readyState === XMLHttpRequest.DONE) {
                 if (xhr.status === 200) {
                     const data = JSON.parse(xhr.responseText);
@@ -41,32 +41,59 @@ function Booktable(){
         setEditedBook({ ...books[index] });
     };
 
+    // const handleDelete = (id, idx) => {
+    //     console.log("Deleting book with id:", id);
+    //     console.log("Books before deletion:", books);
+    //     let response = window.confirm(`Delete id: ${id}`);
+    //     if (response) {
+    //         const xhr = new XMLHttpRequest();
+    //         xhr.open('DELETE', `http://localhost:4000/deletebook/${id}`, true);
+    //         xhr.onload = () =>{
+    //             if (xhr.readyState === XMLHttpRequest.DONE) {
+    //                 console.log('XHR status:', xhr.status);
+    //                 if (xhr.status === 200) {
+    //                     console.log('Book deleted successfully');
+    //                     //fetchBooks();
+
+    //                     toast.success('Book deleted successfully')
+    //                 } else {
+    //                     console.error('Error deleting book:', xhr.statusText);
+    //                     toast.error("error")
+    //                 }
+    //             }
+    //         };
+    //         xhr.send();
+    //     } else {
+    //         alert("Deletion cancelled");
+    //     }
+    // };
+
     const handleDelete = (id, idx) => {
         console.log("Deleting book with id:", id);
         console.log("Books before deletion:", books);
-        let response = window.confirm(`Delete id: ${id}`);
-        if (response) {
+        let result = window.confirm(`Delete id: ${id}`);
+        console.log(result)
+        if (result) {
             const xhr = new XMLHttpRequest();
-            xhr.open('DELETE', `http://localhost:4000/deletebook/${id}`);
-            xhr.onload = function() {
-                if (xhr.readyState === XMLHttpRequest.DONE) {
+            xhr.open('DELETE', `http://localhost:4000/deletebook/${id}`, true);
+            xhr.onload = () => {
+                if (xhr.status === 200) {
                     console.log('XHR status:', xhr.status);
-                    if (xhr.status === 200) {
-                        console.log('Book deleted successfully');
-                        fetchBooks();
-                        toast.success('Book deleted successfully')
-                    } else {
-                        console.error('Error deleting book:', xhr.statusText);
-                        toast.error("error")
-                    }
+                    console.log('Book deleted successfully');
+                    fetchBooks();
+                    toast.success('Book deleted successfully')
+
+                } else {
+                    console.error('Error deleting book:', xhr.statusText);
+                    toast.error("error")
                 }
             };
-            xhr.send(fetchBooks('http://localhost:4000/bookfetch'));
+            xhr.send();
         } else {
             alert("Deletion cancelled");
         }
     };
-    
+
     const handleInputChange = (event) => {
         const { name, value } = event.target;
         setEditedBook(prevState => ({
@@ -83,12 +110,12 @@ function Booktable(){
         const xhr = new XMLHttpRequest();
         xhr.open('PUT', `http://localhost:4000/bookupdate/${bookid}`);
         xhr.setRequestHeader('Content-Type', 'application/json');
-        xhr.onreadystatechange = function() {
+        xhr.onreadystatechange = function () {
             if (xhr.readyState === XMLHttpRequest.DONE) {
                 if (xhr.status === 200) {
                     console.log('Book updated successfully');
-                    fetchBooks(); 
-                    setEditIndex(-1); 
+                    fetchBooks();
+                    setEditIndex(-1);
                     toast.success('Book updated successfully')
                 } else {
                     console.error('Error updating book:', xhr.statusText);
@@ -103,7 +130,9 @@ function Booktable(){
     const indexOfLastBook = currentPage * itemsPerPage;
     const indexOfFirstBook = indexOfLastBook - itemsPerPage;
     const currentBooks = books.slice(indexOfFirstBook, indexOfLastBook);
-
+    const handlepage = (event)  => {
+        setCurrentPage(Math.floor(event.target.value))  
+    }
     return (
         <div className="booktable-container">
             <table className="booktable-table">
@@ -137,7 +166,7 @@ function Booktable(){
                 </tbody>
             </table>
 
-            
+
             {editIndex !== -1 && (
                 <div className="popup">
                     <h2>Edit Book</h2>
@@ -151,10 +180,11 @@ function Booktable(){
             )}
             <div className="pagination">
                 <button onClick={() => setCurrentPage(page => Math.max(page - 1, 1))} disabled={currentPage === 1}>Previous</button>
-                <span>Page {currentPage}</span>
-                <button onClick={() => setCurrentPage(page => page + 1)}>Next</button>
+                {/* <span>Page {currentPage}</span> */}
+                <input type="number" min={1} max={totalpage} value={currentPage} onChange={handlepage} />
+                <button onClick={() => setCurrentPage(page => page + 1)} disabled={currentPage === totalpage}>Next</button>
             </div>
-            <ToastContainer/>
+            <ToastContainer />
         </div>
     );
 }
